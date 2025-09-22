@@ -3,20 +3,15 @@ const bcrypt = require("bcryptjs");
 const validator = require("validator");
 
 const userSchema = mongoose.Schema(
+
   {
-    name: {
-      type: String,
-      required: [true, "Please add a name"],
-    },
-    email: {
-      type: String,
-      required: [true, "Please add an email"],
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Please add a password"],
-    },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    phone_number: { type: String, required: true },
+    gender: { type: String, required: true },
+    date_of_birth: { type: Date, required: true },
+    membership_status: { type: String, required: true },
   },
   {
     timestamps: true,
@@ -24,9 +19,9 @@ const userSchema = mongoose.Schema(
 );
 
 // static signup method
-userSchema.statics.signup = async function (name, email, password) {
+userSchema.statics.signup = async function (name, email, password, phone_number, gender,date_of_birth, membership_status) {
   // validation
-  if ((!name, !email || !password)) {
+  if ((!name, !email, !password, !phone_number, !gender, !date_of_birth || !membership_status  )) {
     throw Error("Please add all fields");
   }
   if (!validator.isEmail(email)) {
@@ -34,6 +29,14 @@ userSchema.statics.signup = async function (name, email, password) {
   }
   if (!validator.isStrongPassword(password)) {
     throw Error("Password not strong enough");
+  }
+
+  if(!validator.isMobilePhone(phone_number)){
+    throw Error("Incorrect phone number")
+  }
+
+  if(!validator.isDate(date_of_birth)){
+    throw Error("Incorrect date type")
   }
 
   const userExists = await this.findOne({ email });
@@ -49,6 +52,10 @@ userSchema.statics.signup = async function (name, email, password) {
     name,
     email,
     password: hashedPassword,
+    phone_number,
+    gender,
+    date_of_birth,
+    membership_status
   });
 
   return user;
