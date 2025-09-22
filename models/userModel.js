@@ -21,7 +21,8 @@ const userSchema = mongoose.Schema(
 // static signup method
 userSchema.statics.signup = async function (name, email, password, phone_number, gender,date_of_birth, membership_status) {
   // validation
-  if ((!name, !email, !password, !phone_number, !gender, !date_of_birth || !membership_status  )) {
+  if ((!name || !email || !password || !phone_number || !gender || !date_of_birth || !membership_status  )) {
+    console.log({name, email, password, phone_number, gender, date_of_birth, membership_status})
     throw Error("Please add all fields");
   }
   if (!validator.isEmail(email)) {
@@ -38,6 +39,10 @@ userSchema.statics.signup = async function (name, email, password, phone_number,
   if(!validator.isDate(date_of_birth)){
     throw Error("Incorrect date type")
   }
+
+  // if(!validator.isS(membership_status)){
+  //   throw Error("Incorrect date type")
+  // }
 
   const userExists = await this.findOne({ email });
 
